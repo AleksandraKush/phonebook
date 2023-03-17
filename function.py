@@ -1,44 +1,49 @@
-phone_book = []
+class PhoneBook:
 
-def open_phone_book(): 
-    with open('phone_book.txt', 'r', encoding = 'utf-8') as data: 
-        phone_book = data.readlines() 
-        print('Файл открыт') 
-        return phone_book
+    def __init__(self, path: str = 'phonebook.txt'):
+        self.path = path 
+        self.phone_book = []
 
-def save_phone_book(): 
-    with open('phone_book.txt', 'w', encoding = 'utf-8') as data: 
-        for i in phone_book: 
-            data.write(i) 
-
-def show_phone_book():
-        for i in phone_book: 
-            print(' '.join(i.split(';')))
-
-def add_phone_book(): 
-        user_info = input('Введите данные нового контакта: ') 
-        user_info = ';'.join(user_info.split(' ')) 
-        phone_book.append('\n' + user_info) 
-
-def change_phone_book(): 
-    user_info = input('Введите номер контакта, которого вы хотите изменить: ') 
-    for i in range(len(phone_book)): 
-            print(phone_book[i]) 
-    new_user_info = input('Введите новый номер контакта: ') 
-    phone_book[i] = phone_book[i].replace(user_info, new_user_info) 
+    def open_file(self):
+        with open(self.path, 'r', encoding = 'utf-8') as file: 
+            data = file.readlines() 
+        for contact in data:
+            pb = {}
+            new = contact.strip().split(';')
+            pb['name'] = new[0]
+            pb['phone'] = new[1]
+            pb['comment'] = new[2]
+            self.phone_book.append(pb)
+    
+    def get(self):
+        return self.phone_book
 
 
-def search_phone_book(): 
-    user_info = input('Введите номер контакта, по которому будем искать: ') 
-    for i in range(len(phone_book)): 
-        if user_info in phone_book[i]: 
-            print(phone_book[i]) 
+    def save_file(self):
+        data = []
+        for contact in self.phone_book:
+            data.append(';'.join(contact.values()))
+        data = '\n'.join(data)
+        with open(self.path, 'w', encoding = 'utf-8') as file: 
+                file.write(data) 
+
+    def add_file(self, contact: dict): 
+            self.phone_book.append(contact)
+            print(f'Контакт {contact.get("name")} записан')
+
+    def change_file(self, i: int, value: dict):
+        self.phone_book[i] = value
+        
+
+    def search(self, word: str) -> list: 
+        res = []
+        for contact in self.phone_book:
+            for field in contact.values():
+                if word in field:
+                    res.append(contact)
+                    return res
 
 
-def delete_phone_book(): 
-    user_info = input('Введите номер контакта, которого вы хотите удалить: ') 
-    for i in range(len(phone_book)): 
-        if user_info in phone_book[i]: 
-            print(phone_book[i]) 
-            phone_book.pop(i) 
-            break
+    def delete(self, i: int):
+        number = self.phone_book.pop(i)
+        print(f'Контакт {number.get("name")} удален') 
